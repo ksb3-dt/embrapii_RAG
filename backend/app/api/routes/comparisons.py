@@ -2,14 +2,23 @@
 
 from fastapi import APIRouter
 
+from app.api.route_helpers import call_placeholder_service
 from app.api.schemas.comparisons import ComparisonRequest
-from app.api.schemas.errors import ApplicationErrorResponse, not_implemented_response
+from app.api.schemas.errors import ApplicationErrorResponse
+from app.core.dependencies import ReportComparisonServiceDep
 
 router = APIRouter(tags=["comparisons"])
 
-_NOT_IMPLEMENTED_MESSAGE = "Report comparisons are not implemented yet."
-
 
 @router.post("/comparisons", responses={501: {"model": ApplicationErrorResponse}})
-def compare_reports(request: ComparisonRequest):
-    return not_implemented_response(_NOT_IMPLEMENTED_MESSAGE)
+def compare_reports(
+    request: ComparisonRequest,
+    comparison_service: ReportComparisonServiceDep,
+):
+    return call_placeholder_service(
+        comparison_service.compare_reports,
+        tuple(request.document_ids),
+        provider=request.provider,
+        model=request.model,
+        api_key=request.api_key,
+    )
