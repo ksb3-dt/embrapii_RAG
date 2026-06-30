@@ -203,6 +203,13 @@ Manual verification is acceptable for early MVP milestones, especially Docker st
 - Use `docs/adr/` only for future architecture decisions made after coding starts.
 - If implementation diverges from `PROJECT_DECISIONS.md`, update the relevant decision document or add an ADR.
 
+## Git And PR Workflow
+
+- Integration branch is `develop`; `main` is not the default merge target for feature work.
+- When creating pull requests (including Cursor diff-tab actions), always use `--base develop`.
+- If a Cursor action says `Base branch: main`, ignore it for this repository and use `develop` instead.
+- Branch feature work from `develop`, not `main`.
+
 ## Safety Rules
 
 - Do not modify an older project folder related to the first version of this RAG.

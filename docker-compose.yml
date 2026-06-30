@@ -1,0 +1,52 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      - redis
+      - qdrant
+    environment:
+      BACKEND_HOST: ${BACKEND_HOST:-0.0.0.0}
+      BACKEND_PORT: ${BACKEND_PORT:-8000}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      DOCUMENTS_DIR: ${DOCUMENTS_DIR:-/app/data/documents}
+    volumes:
+      - ./data/documents:/app/data/documents
+
+  worker:
+    build:
+      context: ./backend
+    depends_on:
+      - redis
+      - qdrant
+    environment:
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      DOCUMENTS_DIR: ${DOCUMENTS_DIR:-/app/data/documents}
+    command:
+      ["uv", "run", "--frozen", "--no-dev", "python", "-m", "app.worker.main"]
+    volumes:
+      - ./data/documents:/app/data/documents
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./data/qdrant:/qdrant/storage
