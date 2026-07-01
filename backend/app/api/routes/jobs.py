@@ -2,13 +2,13 @@
 
 from fastapi import APIRouter
 
-from app.api.schemas.errors import ApplicationErrorResponse, not_implemented_response
+from app.api.route_helpers import call_placeholder_service
+from app.api.schemas.errors import ApplicationErrorResponse
+from app.core.dependencies import JobServiceDep
 
 router = APIRouter(tags=["jobs"])
 
-_NOT_IMPLEMENTED_MESSAGE = "Job status endpoints are not implemented yet."
-
 
 @router.get("/jobs/{job_id}", responses={501: {"model": ApplicationErrorResponse}})
-def get_job(job_id: str):
-    return not_implemented_response(_NOT_IMPLEMENTED_MESSAGE)
+def get_job(job_id: str, job_service: JobServiceDep):
+    return call_placeholder_service(job_service.get_job_status, job_id)
