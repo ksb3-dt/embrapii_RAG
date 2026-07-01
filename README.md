@@ -2,7 +2,7 @@
 
 MVP local baseado em Docker para análise de relatórios públicos em PDF da EMBRAPII. A aplicação é uma ferramenta interna para gestores e, nos marcos futuros, deve priorizar respostas fundamentadas, citações em nível de página e auditoria de evidências.
 
-**Status do Marco 1:** Este repositório oferece atualmente apenas o scaffold de infraestrutura local. Os fluxos de RAG (ingestão, recuperação, Q&A, resumos, comparações, auditoria de evidências e avaliação) **ainda não estão implementados**.
+**Status do Marco 2:** Este repositório oferece atualmente o scaffold de infraestrutura local e o esqueleto backend em arquitetura hexagonal pragmática. Os fluxos reais de RAG (ingestão, recuperação, Q&A, resumos, comparações, auditoria de evidências e avaliação) **ainda não estão implementados**.
 
 ## Stack
 
@@ -26,7 +26,7 @@ Dados locais persistentes:
 - `curl` (para o script de health check)
 - Opcional: `redis-cli` no host, se o Redis for verificado fora do Docker
 
-Nenhuma chave de API ou outro segredo é necessário para o Marco 1.
+Nenhuma chave de API ou outro segredo é necessário para os marcos já implementados.
 
 ## Início rápido
 
@@ -85,17 +85,20 @@ Copie `.env.example` para `.env` e ajuste se necessário. Os padrões correspond
 | `QDRANT_URL`    | `http://qdrant:6333`        | URL do Qdrant na rede do Compose     |
 | `DOCUMENTS_DIR` | `/app/data/documents`       | Diretório de PDFs dentro dos containers |
 
-## O que funciona no Marco 1
+## O que funciona até o Marco 2
 
 - `docker compose up --build` sobe frontend, backend, worker, Redis e Qdrant
 - O backend expõe `GET /health` com `status: ok`
 - O worker inicia como processo placeholder separado (sem jobs em background ainda)
 - O frontend exibe o shell do MVP e a lista de capacidades planejadas
 - `scripts/check-health.sh` reporta a saúde dos serviços a partir do host
+- O backend contém modelos de domínio, políticas, portas/interfaces, schemas e rotas placeholder para os fluxos planejados
+- As rotas placeholder retornam erros explícitos `501 NOT_IMPLEMENTED`, sem respostas RAG falsas
+- Os serviços de aplicação e a injeção de dependências estão preparados para os próximos marcos, ainda sem integrações reais de infraestrutura
 
 ## O que ainda não está implementado
 
-Não espere que o seguinte funcione no Marco 1:
+Não espere que o seguinte funcione até o Marco 2:
 
 - Upload, ingestão, chunking ou indexação de PDFs
 - Embeddings (`BAAI/bge-m3`) ou coleções Qdrant para recuperação
