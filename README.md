@@ -1,12 +1,12 @@
 # EMBRAPII Reports RAG
 
-Local Docker-based MVP for analyzing public EMBRAPII PDF reports. The application is an internal tool for managers and should prioritize grounded answers, page-level citations, and evidence auditing in later milestones.
+MVP local baseado em Docker para análise de relatórios públicos em PDF da EMBRAPII. A aplicação é uma ferramenta interna para gestores e, nos marcos futuros, deve priorizar respostas fundamentadas, citações em nível de página e auditoria de evidências.
 
-**Milestone 1 status:** This repository currently provides the local infrastructure scaffold only. RAG workflows (ingestion, retrieval, Q&A, summaries, comparisons, evidence audit, and evaluation) are **not implemented yet**.
+**Status do Marco 1:** Este repositório oferece atualmente apenas o scaffold de infraestrutura local. Os fluxos de RAG (ingestão, recuperação, Q&A, resumos, comparações, auditoria de evidências e avaliação) **ainda não estão implementados**.
 
 ## Stack
 
-| Service  | Technology              | Default port |
+| Serviço  | Tecnologia              | Porta padrão |
 | -------- | ----------------------- | ------------ |
 | Frontend | React + TypeScript + Vite | `5173`     |
 | Backend  | Python + FastAPI + uv   | `8000`       |
@@ -14,104 +14,104 @@ Local Docker-based MVP for analyzing public EMBRAPII PDF reports. The applicatio
 | Redis    | Redis 7                 | `6379`       |
 | Qdrant   | Qdrant                  | `6333`       |
 
-Persistent local data:
+Dados locais persistentes:
 
-- `data/documents/` — PDF storage (used in later milestones)
-- `data/qdrant/` — Qdrant vector store data
-- `data/app.db` — SQLite metadata (planned for later milestones)
+- `data/documents/` — armazenamento de PDFs (usado em marcos futuros)
+- `data/qdrant/` — dados do vector store Qdrant
+- `data/app.db` — metadados SQLite (planejado para marcos futuros)
 
-## Prerequisites
+## Pré-requisitos
 
-- Docker and Docker Compose
-- `curl` (for the health script)
-- Optional: `redis-cli` on the host if Redis is checked outside Docker
+- Docker e Docker Compose
+- `curl` (para o script de health check)
+- Opcional: `redis-cli` no host, se o Redis for verificado fora do Docker
 
-No API keys or other secrets are required for Milestone 1.
+Nenhuma chave de API ou outro segredo é necessário para o Marco 1.
 
-## Quick start
+## Início rápido
 
-From the repository root:
+Na raiz do repositório:
 
 ```bash
 cp .env.example .env
 docker compose up --build
 ```
 
-After the stack starts:
+Após a subida da stack:
 
-- Frontend shell: [http://localhost:5173](http://localhost:5173)
-- Backend health: [http://localhost:8000/health](http://localhost:8000/health)
+- Shell do frontend: [http://localhost:5173](http://localhost:5173)
+- Health do backend: [http://localhost:8000/health](http://localhost:8000/health)
 
-To run services in the background:
+Para executar os serviços em segundo plano:
 
 ```bash
 docker compose up --build -d
 ```
 
-To stop the stack:
+Para parar a stack:
 
 ```bash
 docker compose down
 ```
 
-## Verify the stack
+## Verificar a stack
 
-Run the health script from the repository root:
+Execute o script de health check na raiz do repositório:
 
 ```bash
 bash scripts/check-health.sh
 ```
 
-The script checks:
+O script verifica:
 
-- Backend `GET /health` (required)
-- Qdrant health on port `6333` (required)
-- Redis `PING` via `docker compose exec` when possible (required)
-- Worker container running status (required)
-- Frontend availability on port `5173` (optional; failure does not fail the script)
+- Backend `GET /health` (obrigatório)
+- Health do Qdrant na porta `6333` (obrigatório)
+- Redis `PING` via `docker compose exec`, quando possível (obrigatório)
+- Status de execução do container do worker (obrigatório)
+- Disponibilidade do frontend na porta `5173` (opcional; falha não reprova o script)
 
-The script exits `0` when all required checks pass and `1` when any required check fails.
+O script encerra com código `0` quando todas as verificações obrigatórias passam e com `1` quando alguma falha.
 
-## Environment variables
+## Variáveis de ambiente
 
-Copy `.env.example` to `.env` and adjust if needed. Defaults match the Docker Compose setup:
+Copie `.env.example` para `.env` e ajuste se necessário. Os padrões correspondem à configuração do Docker Compose:
 
-| Variable       | Default                     | Purpose                          |
-| -------------- | --------------------------- | -------------------------------- |
-| `BACKEND_HOST` | `0.0.0.0`                   | Backend bind host                |
-| `BACKEND_PORT` | `8000`                      | Backend host port                |
-| `FRONTEND_PORT`| `5173`                      | Frontend host port               |
-| `REDIS_URL`    | `redis://redis:6379/0`      | Redis URL inside Compose network |
-| `QDRANT_URL`   | `http://qdrant:6333`        | Qdrant URL inside Compose network|
-| `DOCUMENTS_DIR`| `/app/data/documents`       | PDF directory inside containers  |
+| Variável        | Padrão                      | Finalidade                           |
+| --------------- | --------------------------- | ------------------------------------ |
+| `BACKEND_HOST`  | `0.0.0.0`                   | Host de bind do backend              |
+| `BACKEND_PORT`  | `8000`                      | Porta do backend no host             |
+| `FRONTEND_PORT` | `5173`                      | Porta do frontend no host            |
+| `REDIS_URL`     | `redis://redis:6379/0`      | URL do Redis na rede do Compose      |
+| `QDRANT_URL`    | `http://qdrant:6333`        | URL do Qdrant na rede do Compose     |
+| `DOCUMENTS_DIR` | `/app/data/documents`       | Diretório de PDFs dentro dos containers |
 
-## What works in Milestone 1
+## O que funciona no Marco 1
 
-- `docker compose up --build` starts frontend, backend, worker, Redis, and Qdrant
-- Backend exposes `GET /health` with `status: ok`
-- Worker starts as a separate placeholder process (no background jobs yet)
-- Frontend shows the MVP shell and planned capabilities list
-- `scripts/check-health.sh` reports service health from the host
+- `docker compose up --build` sobe frontend, backend, worker, Redis e Qdrant
+- O backend expõe `GET /health` com `status: ok`
+- O worker inicia como processo placeholder separado (sem jobs em background ainda)
+- O frontend exibe o shell do MVP e a lista de capacidades planejadas
+- `scripts/check-health.sh` reporta a saúde dos serviços a partir do host
 
-## What is not implemented yet
+## O que ainda não está implementado
 
-Do not expect the following to work in Milestone 1:
+Não espere que o seguinte funcione no Marco 1:
 
-- PDF upload, ingestion, chunking, or indexing
-- Embeddings (`BAAI/bge-m3`) or Qdrant collections for retrieval
-- Dense/keyword retrieval or Reciprocal Rank Fusion
-- Portuguese Q&A with citations
-- Structured report summaries or multi-report comparisons
-- Evidence audit (`Auditar`)
-- Golden-set evaluation
-- LLM provider calls or API key handling
-- Background jobs via Redis + RQ
+- Upload, ingestão, chunking ou indexação de PDFs
+- Embeddings (`BAAI/bge-m3`) ou coleções Qdrant para recuperação
+- Recuperação densa/por palavra-chave ou Reciprocal Rank Fusion
+- Q&A em português com citações
+- Resumos estruturados de relatórios ou comparações entre múltiplos relatórios
+- Auditoria de evidências (`Auditar`)
+- Avaliação com golden set
+- Chamadas a provedores de LLM ou tratamento de chaves de API
+- Jobs em background via Redis + RQ
 
-These workflows are planned for later milestones. See `PROJECT_DECISIONS.md` and `docs/specs/` for the full roadmap.
+Esses fluxos estão planejados para marcos futuros. Consulte `PROJECT_DECISIONS.md` e `docs/specs/` para o roadmap completo.
 
-## Development notes
+## Notas de desenvolvimento
 
-Backend (outside Docker, optional):
+Backend (fora do Docker, opcional):
 
 ```bash
 cd backend
@@ -120,7 +120,7 @@ uv run pytest -q
 uv run ruff check .
 ```
 
-Frontend (outside Docker, optional):
+Frontend (fora do Docker, opcional):
 
 ```bash
 cd frontend
@@ -128,8 +128,8 @@ npm install
 npm run build
 ```
 
-## Project documentation
+## Documentação do projeto
 
-- `PROJECT_DECISIONS.md` — product and architecture source of truth
-- `AGENTS.md` — conventions for coding agents
-- `docs/specs/` — implementation specs by milestone
+- `PROJECT_DECISIONS.md` — fonte da verdade de produto e arquitetura
+- `AGENTS.md` — convenções para agentes de codificação
+- `docs/specs/` — especificações de implementação por marco
